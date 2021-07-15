@@ -2,12 +2,33 @@ import scala.math.max
 import java.security.MessageDigest
 object Main {
   def main(args: Array[String]): Unit = {
-    val md5 = MessageDigest.getInstance("MD5")
-    val hash = (s: String) =>
-      md5.digest(s.getBytes).map("%02x".format(_)).mkString
     val puzzle: String = "zpqevtbw" //"abc"
 
-    val trips = "0123456789abcdef".map(c => s"$c" * 3)
+    val hex = "0123456789abcdef"
+    val hexb = hex.getBytes
+
+    val md5 = MessageDigest.getInstance("MD5")
+
+    def hash1(s: String): String = {
+      md5.digest(s.getBytes).map("%02x".format(_)).mkString
+    }
+
+    def hash2(s: String): String = {
+      def btos(b: Array[Byte]): Array[Byte] = {
+        val res: Array[Byte] = Array.fill(b.length * 2) { 0 }
+        for (i <- 0 until b.length) {
+          val v = b(i) & 255
+          res(i * 2) = hexb(v >> 4)
+          res(i * 2 + 1) = hexb(v & 15)
+        }
+        return res
+      }
+      var b = btos(md5.digest(s.getBytes))
+      for (_ <- 0 until 2016) b = btos(md5.digest(b))
+      return String(b)
+    }
+
+    val trips = hex.map(c => s"$c" * 3)
     def first(s: String): String = {
       return (0 to s.length - 3)
         .map(i => s.slice(i, i + 3))
@@ -15,7 +36,7 @@ object Main {
         .getOrElse("---")
     }
 
-    val quints = "0123456789abcdef".map(c => s"$c" * 5)
+    val quints = hex.map(c => s"$c" * 5)
     def quint(s: String): String = {
       val c = (0 to s.length - 5)
         .map(i => s.slice(i, i + 5))
@@ -33,7 +54,7 @@ object Main {
     var i: Int = 0
     while (ind1.length < 64 || ind2.length < 64) {
       val s = s"$puzzle$i"
-      val h = hash(s)
+      val h = hash1(s)
       arr1 :+= h
 
       val ti = quint(h)
@@ -44,8 +65,7 @@ object Main {
         //println(s"ind1: ${ind1.length}")
       }
 
-      var hh = h
-      for (_ <- 0 until 2016) hh = hash(hh)
+      val hh = hash2(s)
       arr2 :+= hh
 
       val tj = quint(hh)
