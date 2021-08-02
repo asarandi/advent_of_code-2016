@@ -1,0 +1,28 @@
+            [a:7, b:0, c:0, d:0]
+           
+cpy a b             b = a  ; b=7
+dec b               b--    ; b=6
+cpy a d <<------+   d = a  ; d=7
+cpy 0 a         |   a = 0  ; a=0
+cpy b c <<----+ |   c = b  ; c=6
+inc a    <<-+ | |   a++    ; a=1
+dec c       | | |   c--    ;
+jnz c -2  --+ | |    
+dec d         | |   d--
+jnz d -5  ----+ |    
+dec b           |   b--
+cpy b c         |   c = b
+cpy c d         |   d = c
+dec d   <<-+    |   d--
+inc c      |    |   c++
+jnz d -2 --+    |    
+tgl c           |    
+cpy -16 c       |    
+jnz 1 c  -------+    
+cpy 73 c             
+jnz 82 d <<--+       
+inc a   <<-+ |       
+inc d      | |       
+jnz d -2 --+ |       
+inc c        |       
+jnz c -5 ----+       
