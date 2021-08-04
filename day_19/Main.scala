@@ -16,6 +16,21 @@ object Main {
     }
 
     println(s"part 1: ${a(0)}")
+
+    var p2, s: Int = 2
+    for (i <- 0 until 20) {
+      val k: Int = math.pow(3, i).toInt + 1
+      s = if (k <= N) k else s
+    }
+    val d = N - s
+    if (d <= s - 2) {
+      p2 = d
+    } else {
+      p2 = (N - (s * 2 - 1)) * 2 + s
+    }
+
+    println(s"part 2: ${p2 + 1}")
+
   }
 }
 
